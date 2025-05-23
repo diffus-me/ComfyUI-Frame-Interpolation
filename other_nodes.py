@@ -1,3 +1,4 @@
+import execution_context
 import latent_preview
 import comfy
 import einops
@@ -56,7 +57,8 @@ class Gradually_More_Denoise_KSampler:
                     "denoise_increment": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1.0, "step": 0.1}),
                     "denoise_increment_steps": ("INT", {"default": 20, "min": 1, "max": 10000})
                      },
-                "optional": { "optional_vae": ("VAE",) }
+                "optional": { "optional_vae": ("VAE",) },
+                "hidden": { "context": "EXECUTION_CONTEXT",}
                 }
 
     RETURN_TYPES = ("MODEL", "CONDITIONING", "CONDITIONING", "LATENT", "VAE", )
@@ -66,7 +68,8 @@ class Gradually_More_Denoise_KSampler:
     CATEGORY = "ComfyUI-Frame-Interpolation/others"
 
     def sample(self, model, positive, negative, latent_image, optional_vae, 
-               seed, steps, cfg, sampler_name, scheduler,start_denoise, denoise_increment, denoise_increment_steps):
+               seed, steps, cfg, sampler_name, scheduler,start_denoise, denoise_increment, denoise_increment_steps,
+               context: execution_context.ExecutionContext):
         if start_denoise + denoise_increment * denoise_increment_steps > 1.0:
             raise Exception(f"Max denoise strength can't over 1.0 (start_denoise={start_denoise}, denoise_increment={denoise_increment}, denoise_increment_steps={denoise_increment_steps}")
 
